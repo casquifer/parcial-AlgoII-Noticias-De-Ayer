@@ -13,6 +13,8 @@ class Periodista(
 ){
     fun leGusta(noticia: Noticia) = preferencia.leGusta(noticia)
 
+
+
     fun cobrar(monto:Double) {
         saldo += monto
     }
@@ -37,4 +39,8 @@ object Sensacionalista: Preferencia{
 
 object JoseDeZer:Preferencia{
     override fun leGusta(noticia: Noticia) = noticia.titulo.first() == 'T'
+}
+
+object Relajada:Preferencia{
+    override fun leGusta(noticia: Noticia) = true
 }

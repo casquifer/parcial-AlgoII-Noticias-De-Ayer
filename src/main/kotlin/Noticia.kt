@@ -19,9 +19,9 @@ abstract class Noticia(
 
     fun esNueva() = ChronoUnit.DAYS.between(fecha, LocalDate.now()).toInt() < 3
 
-    abstract fun CopadaEspecifica(): Boolean //primitiva
+    abstract fun copadaEspecifica(): Boolean //primitiva
 
-    fun esCopada() = esImportante() && esNueva() && CopadaEspecifica()
+    fun esCopada() = esImportante() && esNueva() && copadaEspecifica()
 
     fun esSensacionalista() = tituloSensacional() && tipoSensacionalista()
 
@@ -34,6 +34,10 @@ abstract class Noticia(
     abstract fun esEspecial(): Boolean
 
     fun esMedioImportante() = importancia in 5..7
+
+    fun leGustaAlPeriodista() = periodista.leGusta(this)
+
+    fun esDeHoy() = fecha == LocalDate.now()
 }
 
 class Articulo(val links: MutableList<String>,
@@ -44,7 +48,7 @@ class Articulo(val links: MutableList<String>,
                titulo: String,
                desarrollo: String): Noticia(codigo,fecha, periodista, importancia, titulo, desarrollo){
 
-    override fun CopadaEspecifica() = links.size >= 2
+    override fun copadaEspecifica() = links.size >= 2
 
     override fun tipoSensacionalista() = true
 
@@ -61,11 +65,11 @@ class Chivo(var costo:Double,
 
    var montoASuperar: Int = 2_000_000
 
-    override fun CopadaEspecifica() = costo > montoASuperar
+    override fun copadaEspecifica() = costo > montoASuperar
 
     override fun tipoSensacionalista() = true
 
-    override fun esEspecial() = CopadaEspecifica()
+    override fun esEspecial() = copadaEspecifica()
 }
 
 class Reportaje(val entrevistado: String,
@@ -79,7 +83,33 @@ class Reportaje(val entrevistado: String,
 
     val nombreAComparar: String = "Dibu Martinez"
 
-    override fun CopadaEspecifica() = entrevistado.length % 2 != 0
+    override fun copadaEspecifica() = entrevistado.length % 2 != 0
+
+    override fun tipoSensacionalista() = entrevistado == nombreAComparar
+
+    override fun esEspecial() = esMusico
+}
+
+class ReportajeEspecial(val entrevistado: String,
+                        val esMusico: Boolean,
+                        val nombreVideo: String,
+                        val plataforma: String,
+                        val urlVideo: String,
+                        val duracionVideoSegundos: Int,
+                        codigo: String = "R",
+                        fecha: LocalDate,
+                        periodista: Periodista,
+                        importancia: Int,
+                        titulo: String,
+                        desarrollo: String): Noticia(codigo,fecha, periodista, importancia, titulo, desarrollo) {
+
+    val nombreAComparar: String = "Dibu Martinez"
+
+    val plataformaCopada = "youtube.com"
+
+    val duracionMaxVideoCopado = 300
+
+    override fun copadaEspecifica() = urlVideo.contains(plataformaCopada) && (duracionVideoSegundos < duracionMaxVideoCopado)
 
     override fun tipoSensacionalista() = entrevistado == nombreAComparar
 

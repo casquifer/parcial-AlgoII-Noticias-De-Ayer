@@ -54,22 +54,17 @@ class NotificarANSI(): PublicacionObserver {
         }
     }
 
-    fun crearLista(noticias: MutableList<Noticia>): MutableList<ANSIDTO>{
+    fun crearLista(noticias: MutableList<Noticia>): MutableList<ANSIDTO> {
         val maxCaracteresDesarrollo = 100
-        val listaFormateada = mutableListOf<ANSIDTO>()
 
-        noticias.forEach{
-            val ansiDTO =
-                ANSIDTO(codigo = it.codigo,
-                    desarrollo = it.desarrollo.take(maxCaracteresDesarrollo),
-                    nombreDePeriodista = it.periodista.nombre,
-                    prioridad = prioridad(it)
-                )
-
-            listaFormateada.add(ansiDTO)
-        }
-
-        return listaFormateada
+        return noticias.map {
+            ANSIDTO(
+                codigo = it.codigo,
+                desarrollo = it.desarrollo.take(maxCaracteresDesarrollo),
+                nombreDePeriodista = it.periodista.nombre,
+                prioridad = prioridad(it)
+            )
+        }.toMutableList()
     }
 
     override fun publicacionRealizada(publicacion: Publicacion) {
@@ -80,5 +75,16 @@ class NotificarANSI(): PublicacionObserver {
                 body = listaANSI
             )
         )
+    }
+}
+
+//si hay periodista no le gusta la noticia cambie la preferencia
+class nuevoObserver: PublicacionObserver {
+    override fun publicacionRealizada(publicacion: Publicacion) {
+        publicacion.noticias.forEach {
+            if(!it.leGustaAlPeriodista()){
+                it.periodista.preferencia = Relajada
+            }
+        }
     }
 }

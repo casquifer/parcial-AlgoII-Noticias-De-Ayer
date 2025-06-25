@@ -12,7 +12,7 @@ interface CriterioEleccion {
 }
 
 object GustaAlPeriodista: CriterioEleccion{
-    override fun cumple(noticia: Noticia) = noticia.periodista.leGusta(noticia)
+    override fun cumple(noticia: Noticia) = noticia.leGustaAlPeriodista()
 }
 
 object NoticiaSensacionalista: CriterioEleccion{
@@ -48,11 +48,10 @@ object Administrador{
 
     // Genero la publicacion
     fun generarPublicacion(noticiasArevisar: MutableList<Noticia>){
-        noticiasArevisar.forEach {
-            if(criterioEleccion.cumple(it)){
-                noticiasConfirmadas.add(it)}
-        }
+        noticiasConfirmadas = noticiasArevisar.filter{ noticiasAPublicar(it) }.toMutableList()
     }
+
+    private fun noticiasAPublicar(it: Noticia) = criterioEleccion.cumple(it) && it.esDeHoy()
 
     fun agregarNoticiaConfirmada(noticia: Noticia){
         noticiasConfirmadas.add(noticia)
@@ -62,13 +61,9 @@ object Administrador{
         noticiasConfirmadas.remove(noticia)
     }
 
-    fun confirmarPublicacion(): Publicacion{
+    fun confirmarPublicacion(){
         val publicacion = Publicacion(LocalDate.now(), noticiasConfirmadas)
 
         publicacionObservers.forEach{ it.publicacionRealizada(publicacion)}
-
-        noticiasConfirmadas.clear()
-
-        return publicacion
     }
 }
