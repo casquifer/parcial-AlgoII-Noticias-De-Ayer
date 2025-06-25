@@ -89,29 +89,3 @@ class Reportaje(val entrevistado: String,
 
     override fun esEspecial() = esMusico
 }
-
-class ReportajeEspecial(val entrevistado: String,
-                        val esMusico: Boolean,
-                        val nombreVideo: String,
-                        val plataforma: String,
-                        val urlVideo: String,
-                        val duracionVideoSegundos: Int,
-                        codigo: String = "R",
-                        fecha: LocalDate,
-                        periodista: Periodista,
-                        importancia: Int,
-                        titulo: String,
-                        desarrollo: String): Noticia(codigo,fecha, periodista, importancia, titulo, desarrollo) {
-
-    val nombreAComparar: String = "Dibu Martinez"
-
-    val plataformaCopada = "youtube.com"
-
-    val duracionMaxVideoCopado = 300
-
-    override fun copadaEspecifica() = urlVideo.contains(plataformaCopada) && (duracionVideoSegundos < duracionMaxVideoCopado)
-
-    override fun tipoSensacionalista() = entrevistado == nombreAComparar
-
-    override fun esEspecial() = esMusico
-}
